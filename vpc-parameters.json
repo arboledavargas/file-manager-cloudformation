@@ -1,0 +1,22 @@
+[
+    {
+        "ParameterKey": "VpcCidrRange",
+        "ParameterValue": "10.0.0.0/16"
+    },
+    {
+      "ParameterKey": "SubnetAvailabilityZoneA",
+      "ParameterValue": "us-east-1a"
+    },
+    {
+      "ParameterKey": "SubnetCidrRangeA",
+      "ParameterValue": "10.0.1.0/24"
+    },
+    {
+      "ParameterKey": "SubnetAvailabilityZoneB",
+      "ParameterValue": "us-east-1b"
+    },
+    {
+      "ParameterKey": "SubnetCidrRangeB",
+      "ParameterValue": "10.0.2.0/24"
+    }
+]
