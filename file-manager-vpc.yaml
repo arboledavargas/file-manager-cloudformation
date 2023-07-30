@@ -1,0 +1,69 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: networking for the file manager application
+Parameters:
+  VpcCidrRange:
+    Type: String
+  SubnetAvailabilityZoneA:
+    Type: String
+  SubnetCidrRangeA:
+    Type: String
+  SubnetAvailabilityZoneB:
+    Type: String
+  SubnetCidrRangeB:
+    Type: String
+Resources:
+  FileManagerVpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCidrRange
+  Internetgateway:
+    Type: AWS::EC2::InternetGateway
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref FileManagerVpc
+      InternetGatewayId: !Ref Internetgateway
+  VpcRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties: 
+      VpcId: !Ref FileManagerVpc
+  SubnetARoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref VpcRouteTable
+      GatewayId: !Ref Internetgateway
+      DestinationCidrBlock: 0.0.0.0/0
+  SubnetAAssociationRouteTable:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref VpcRouteTable
+      SubnetId: !Ref FileManagerSubnetA
+  FileManagerSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref FileManagerVpc
+      CidrBlock: !Ref SubnetCidrRangeA
+      AvailabilityZone: !Ref SubnetAvailabilityZoneA
+  FileManagerSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref FileManagerVpc
+      CidrBlock: !Ref SubnetCidrRangeB
+      AvailabilityZone: !Ref SubnetAvailabilityZoneB
+
+Outputs:
+  subnetA:
+    Description: load balancer subnet A
+    Value: !Ref FileManagerSubnetA
+    Export: 
+      Name: subnetA
+  subnetB:
+    Description: load balancer subnet B
+    Value: !Ref FileManagerSubnetB
+    Export:
+      Name: subnetB
+  mainvpc:
+    Description: vpcfor file manager application
+    Value: !Ref FileManagerVpc
+    Export:
+      Name: mainvpc
