@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: file manager stack it lauches ec2 instances, load balancer, security groups, auto scaling
+Description: file manager stack ec2
 Parameters:
   InstanceType:
     Type: String
@@ -20,6 +20,7 @@ Resources:
           CidrIp: 0.0.0.0/0
           FromPort: 80
           ToPort: 60000
+
   LoadBalancerSg:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -36,25 +37,12 @@ Resources:
           CidrIp: 0.0.0.0/0
           FromPort: 80
           ToPort: 60000
-  Ec2Instance:
-    Type: AWS::EC2::Instance
+
+  KeyPair:
+    Type: "AWS::EC2::KeyPair"
     Properties:
-      InstanceType: !Ref 'InstanceType'
-      ImageId: ami-06b09bfacae1453cb
-      SubnetId: !ImportValue subnetA
-      SecurityGroupIds:
-        - !Ref InstancesSg
-  TargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      VpcId: !ImportValue mainvpc
-      TargetType: instance
-      Protocol: HTTP
-      Port: 80
-      Name: file-manager-tg
-      Targets:
-        - Id: !Ref Ec2Instance
-          Port: 80
+      KeyName: FileManagerAutoSacalingGroupKeyPair
+
   LoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
@@ -66,3 +54,23 @@ Resources:
       SecurityGroups:
         - !Ref LoadBalancerSg
 
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        ImageId: ami-08a52ddb321b32a8c
+        InstanceType: !Ref "InstanceType"
+        KeyName: FileManagerAutoSacalingGroupKeyPair
+
+  AutoScallingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier:
+        - !ImportValue subnetA
+        - !ImportValue subnetB
+      LaunchTemplate:
+        LaunchTemplateId: !Ref LaunchTemplate
+        Version: !GetAtt myLaunchTemplate.LatestVersionNumber
+      MaxSize: "1"
+      MinSize: "1"
+      DesiredCapacity: "1"

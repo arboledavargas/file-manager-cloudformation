@@ -16,28 +16,6 @@ Resources:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: !Ref VpcCidrRange
-  Internetgateway:
-    Type: AWS::EC2::InternetGateway
-  InternetGatewayAttachment:
-    Type: AWS::EC2::VPCGatewayAttachment
-    Properties:
-      VpcId: !Ref FileManagerVpc
-      InternetGatewayId: !Ref Internetgateway
-  VpcRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties: 
-      VpcId: !Ref FileManagerVpc
-  SubnetARoute:
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref VpcRouteTable
-      GatewayId: !Ref Internetgateway
-      DestinationCidrBlock: 0.0.0.0/0
-  SubnetAAssociationRouteTable:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref VpcRouteTable
-      SubnetId: !Ref FileManagerSubnetA
   FileManagerSubnetA:
     Type: AWS::EC2::Subnet
     Properties:
@@ -51,11 +29,51 @@ Resources:
       CidrBlock: !Ref SubnetCidrRangeB
       AvailabilityZone: !Ref SubnetAvailabilityZoneB
 
+  Internetgateway:
+    Type: AWS::EC2::InternetGateway
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref FileManagerVpc
+      InternetGatewayId: !Ref Internetgateway
+
+  RouteTableA:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref FileManagerVpc
+  SubnetARoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref RouteTableA
+      GatewayId: !Ref Internetgateway
+      DestinationCidrBlock: 0.0.0.0/0
+  SubnetAAssociationRouteTable:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RouteTableA
+      SubnetId: !Ref FileManagerSubnetA
+
+  RouteTableB:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref FileManagerVpc
+  SubnetBRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref RouteTableB
+      GatewayId: !Ref Internetgateway
+      DestinationCidrBlock: 0.0.0.0/0
+  SubnetBAssociationRouteTable:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RouteTableB
+      SubnetId: !Ref FileManagerSubnetB
+
 Outputs:
   subnetA:
     Description: load balancer subnet A
     Value: !Ref FileManagerSubnetA
-    Export: 
+    Export:
       Name: subnetA
   subnetB:
     Description: load balancer subnet B
