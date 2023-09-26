@@ -22,12 +22,15 @@ Resources:
       VpcId: !Ref FileManagerVpc
       CidrBlock: !Ref SubnetCidrRangeA
       AvailabilityZone: !Ref SubnetAvailabilityZoneA
+      MapPublicIpOnLaunch: true
+
   FileManagerSubnetB:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref FileManagerVpc
       CidrBlock: !Ref SubnetCidrRangeB
       AvailabilityZone: !Ref SubnetAvailabilityZoneB
+      MapPublicIpOnLaunch: true
 
   Internetgateway:
     Type: AWS::EC2::InternetGateway
