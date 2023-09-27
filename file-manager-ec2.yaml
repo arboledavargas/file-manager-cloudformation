@@ -71,6 +71,8 @@ Resources:
       LaunchTemplate:
         LaunchTemplateId: !Ref LaunchTemplate
         Version: !GetAtt LaunchTemplate.LatestVersionNumber
+      TargetGroupARNs:
+        - !Ref LoadBalancer
       MaxSize: "1"
       MinSize: "1"
       DesiredCapacity: "1"
