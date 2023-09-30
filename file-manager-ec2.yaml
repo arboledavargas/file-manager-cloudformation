@@ -95,6 +95,8 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       VpcId: !ImportValue mainvpc
+      Protocol: HTTP
+      Port: 8080
 
   AutoScallingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
