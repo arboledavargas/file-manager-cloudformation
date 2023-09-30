@@ -42,7 +42,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: allow public trafic
-      GroupName: load-balancer-sg
+      GroupName: launch-tamplate-sg
       VpcId: !ImportValue mainvpc
       SecurityGroupIngress:
         - IpProtocol: TCP
