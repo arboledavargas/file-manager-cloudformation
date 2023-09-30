@@ -38,6 +38,23 @@ Resources:
           FromPort: 80
           ToPort: 60000
 
+  LaunchTempalteSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: allow public trafic
+      GroupName: load-balancer-sg
+      VpcId: !ImportValue mainvpc
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          CidrIp: 0.0.0.0/0
+          FromPort: 8080
+          ToPort: 8080
+      SecurityGroupEgress:
+        - IpProtocol: TCP
+          CidrIp: 0.0.0.0/0
+          FromPort: 80
+          ToPort: 60000
+
   KeyPair:
     Type: "AWS::EC2::KeyPair"
     Properties:
@@ -54,6 +71,16 @@ Resources:
       SecurityGroups:
         - !Ref LoadBalancerSg
 
+  LoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 80
+      Protocol: http
+
   LaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
     Properties:
@@ -61,6 +88,13 @@ Resources:
         ImageId: ami-08a52ddb321b32a8c
         InstanceType: !Ref "InstanceType"
         KeyName: FileManagerAutoSacalingGroupKeyPair
+        SecurityGroups:
+          - !Ref LaunchTempalteSg
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !ImportValue mainvpc
 
   AutoScallingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
@@ -72,7 +106,7 @@ Resources:
         LaunchTemplateId: !Ref LaunchTemplate
         Version: !GetAtt LaunchTemplate.LatestVersionNumber
       TargetGroupARNs:
-        - !Ref LoadBalancer
+        - !Ref TargetGroup
       MaxSize: "1"
       MinSize: "1"
       DesiredCapacity: "1"
