@@ -38,17 +38,21 @@ Resources:
           FromPort: 80
           ToPort: 60000
 
-  LaunchTempalteSg:
+  LaunchTemplateSg:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: allow public trafic
       GroupName: launch-tamplate-sg
       VpcId: !ImportValue mainvpc
       SecurityGroupIngress:
-        - IpProtocol: TCP
+        - IpProtocol: HTTP
           CidrIp: 0.0.0.0/0
-          FromPort: 8080
-          ToPort: 8080
+          FromPort: 80
+          ToPort: 80
+        - IpProtocol: SSH
+          CidrIp: 0.0.0.0/0
+          FromPort: 22
+          ToPort: 22
       SecurityGroupEgress:
         - IpProtocol: TCP
           CidrIp: 0.0.0.0/0
@@ -89,7 +93,7 @@ Resources:
         InstanceType: !Ref "InstanceType"
         KeyName: FileManagerAutoSacalingGroupKeyPair
         SecurityGroupIds:
-          - !Ref LaunchTempalteSg
+          - !Ref LaunchTemplateSg
 
   TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
