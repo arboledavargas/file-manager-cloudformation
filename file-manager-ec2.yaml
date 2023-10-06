@@ -88,7 +88,7 @@ Resources:
         ImageId: ami-08a52ddb321b32a8c
         InstanceType: !Ref "InstanceType"
         KeyName: FileManagerAutoSacalingGroupKeyPair
-        SecurityGroups:
+        SecurityGroupIds:
           - !Ref LaunchTempalteSg
 
   TargetGroup:
