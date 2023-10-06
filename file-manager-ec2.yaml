@@ -79,7 +79,7 @@ Resources:
           TargetGroupArn: !Ref TargetGroup
       LoadBalancerArn: !Ref LoadBalancer
       Port: 8080
-      Protocol: http
+      Protocol: HTTP
 
   LaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
