@@ -10,7 +10,7 @@ jobs:
       - name: clone repository
         uses: actions/checkout@v3
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::692060838294:role/gitHubActionRole
           aws-region: us-east-1
